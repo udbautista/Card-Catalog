@@ -1,0 +1,270 @@
+<div id="app"></div>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Source+Serif+4:ital@0;1&family=Source+Sans+3:wght@400;500;600&display=swap');
+
+  :root {
+    --brass: #A8823C;
+    --sage: #5F7A61;
+    --rust: #A6553F;
+    --ink: #23262D;
+    --paper: #FBF7EE;
+    --navy: #171A21;
+    --line: #2B303B;
+  }
+  * { box-sizing: border-box; }
+  html, body { background: var(--navy); margin: 0; padding: 0; }
+  #app {
+    min-height: 100vh;
+    background: var(--navy);
+    color: var(--paper);
+    font-family: 'Source Sans 3', system-ui, sans-serif;
+  }
+  .wrap { max-width: 480px; margin: 0 auto; padding: 28px 18px 60px; }
+  h1 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 28px; margin: 0; letter-spacing: -0.01em; }
+  .sub { font-size: 13px; color: #8A93A6; margin-top: 6px; font-family: 'Source Serif 4', serif; font-style: italic; }
+  .count { font-size: 12px; color: #8A93A6; }
+  .headerRow { display: flex; align-items: baseline; justify-content: space-between; }
+  button { cursor: pointer; font-family: inherit; }
+  input, textarea {
+    width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--line);
+    color: var(--paper); font-family: 'Source Sans 3', sans-serif; font-size: 15px; padding: 8px 2px; outline: none;
+  }
+  input::placeholder, textarea::placeholder { color: #5B6376; }
+  input:focus, textarea:focus { border-bottom-color: var(--brass) !important; }
+  label.field { font-size: 11px; letter-spacing: 0.03em; color: #9CA3AF; margin-bottom: 4px; display: block; }
+  .empty {
+    border: 1px dashed var(--line); border-radius: 4px; padding: 36px 20px; text-align: center; color: #8A93A6;
+  }
+  .primaryBtn {
+    background: var(--brass); color: var(--navy); border: none; border-radius: 3px;
+    padding: 13px; font-size: 14px; font-weight: 600; width: 100%;
+  }
+  .ghostBtn {
+    background: transparent; border: 1px solid var(--line); color: var(--paper); border-radius: 3px;
+    padding: 12px; font-size: 13px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .backBtn { background: none; border: none; color: #8A93A6; font-size: 13px; display: flex; align-items: center; gap: 4px; padding: 0; margin-bottom: 18px; }
+  .listItem {
+    text-align: left; background: var(--paper); color: var(--ink); border: none; border-radius: 2px;
+    padding: 14px 16px; border-left: 4px solid var(--brass); width: 100%; margin-bottom: 10px; display: block;
+  }
+  .listTop { display: flex; justify-content: space-between; align-items: flex-start; }
+  .listName { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 500; }
+  .listMeta { font-size: 12px; color: #6B7280; margin-top: 2px; }
+  .listRight { text-align: right; flex-shrink: 0; margin-left: 12px; }
+  .listAge { font-size: 11px; color: #6B7280; }
+  .listPerks { font-size: 11px; color: var(--sage); margin-top: 2px; }
+  .card {
+    background: var(--paper); color: var(--ink); border-radius: 3px; padding: 22px 20px; border-left: 4px solid var(--brass);
+  }
+  .cardTop { display: flex; justify-content: space-between; align-items: flex-start; }
+  .cardName { font-family: 'Fraunces', serif; font-size: 23px; font-weight: 500; }
+  .cardMeta { font-size: 13px; color: #6B7280; margin-top: 3px; }
+  .iconBtn { background: none; border: none; padding: 4px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 18px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .fieldLabel { font-size: 11px; color: #9CA3AF; letter-spacing: 0.03em; }
+  .fieldVal { font-size: 14px; margin-top: 2px; }
+  .fieldSub { font-size: 11px; color: var(--sage); margin-top: 1px; }
+  .perksList { margin: 0; padding: 0; list-style: none; }
+  .perksList li { font-size: 14px; padding: 7px 0; border-bottom: 1px solid #E8E2D4; display: flex; gap: 8px; }
+  .perksList li:first-child { border-top: 1px solid #E8E2D4; }
+  .notesTxt { font-size: 14px; line-height: 1.5; font-family: 'Source Serif 4', serif; }
+  .formGroup { display: flex; flex-direction: column; gap: 16px; }
+  .chip {
+    background: #1F2430; border: 1px solid var(--line); border-radius: 20px; padding: 5px 10px; font-size: 12px;
+    display: inline-flex; align-items: center; gap: 6px; margin: 0 6px 6px 0;
+  }
+  .chip svg { cursor: pointer; }
+  .errorTxt { font-size: 13px; color: var(--rust); margin-bottom: 12px; }
+  .addRow { display: flex; gap: 8px; margin-bottom: 8px; }
+  .smallAddBtn { background: transparent; border: 1px solid var(--line); border-radius: 3px; padding: 0 12px; color: var(--paper); }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+</style>
+
+<script>
+(function () {
+  const ICONS = {
+    plus: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+    x: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8A93A6" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+    chevronLeft: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>',
+    pencil: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>',
+    trash: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A6553F" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+  };
+
+  const BLANK = { id: null, nickname: "", issuer: "", network: "", last4: "", opened: "", annualFee: "", feeMonth: "", creditLimit: "", perks: [], notes: "" };
+
+  let state = { cards: [], loaded: false, view: "list", activeId: null, draft: { ...BLANK }, perkInput: "", error: "" };
+
+  function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+
+  function monthsBetween(dateStr) {
+    if (!dateStr) return null;
+    const start = new Date(dateStr);
+    const now = new Date();
+    return (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth());
+  }
+  function ageLabel(dateStr) {
+    const m = monthsBetween(dateStr);
+    if (m === null) return "—";
+    if (m < 1) return "opened this month";
+    const years = Math.floor(m / 12), months = m % 12;
+    if (years === 0) return months + " mo open";
+    if (months === 0) return years + " yr open";
+    return years + " yr " + months + " mo open";
+  }
+  function formatDate(dateStr) {
+    if (!dateStr) return "—";
+    const d = new Date(dateStr + "T00:00:00");
+    return d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+  }
+  function esc(s) {
+    return (s || "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
+
+  async function loadCards() {
+    try {
+      const res = await window.storage.get("cards", false);
+      if (res && res.value) state.cards = JSON.parse(res.value);
+    } catch (e) {}
+    state.loaded = true;
+    render();
+  }
+  async function persist(next) {
+    state.cards = next;
+    try {
+      await window.storage.set("cards", JSON.stringify(next), false);
+    } catch (e) {
+      state.error = "Couldn't save — your last change may not stick.";
+    }
+  }
+
+  function sortedCards() {
+    return [...state.cards].sort((a, b) => {
+      if (!a.opened) return 1;
+      if (!b.opened) return -1;
+      return new Date(a.opened) - new Date(b.opened);
+    });
+  }
+  function getActive() { return state.cards.find((c) => c.id === state.activeId) || null; }
+
+  function goList() { state.view = "list"; state.activeId = null; render(); }
+  function startNew() { state.draft = { ...BLANK, id: uid() }; state.perkInput = ""; state.error = ""; state.view = "form"; render(); }
+  function startEdit(card) { state.draft = { ...card, perks: [...card.perks] }; state.perkInput = ""; state.error = ""; state.view = "form"; render(); }
+  function openDetail(id) { state.activeId = id; state.view = "detail"; render(); }
+  function cancelForm() {
+    state.view = state.cards.some((c) => c.id === state.draft.id) ? "detail" : "list";
+    if (state.view === "list") state.activeId = null;
+    render();
+  }
+  function addPerk() {
+    const v = state.perkInput.trim();
+    if (!v) return;
+    state.draft.perks.push(v);
+    state.perkInput = "";
+    render();
+  }
+  function removePerk(i) { state.draft.perks.splice(i, 1); render(); }
+  async function saveDraft() {
+    if (!state.draft.nickname.trim()) { state.error = "Give the card a name before saving."; render(); return; }
+    state.error = "";
+    const exists = state.cards.some((c) => c.id === state.draft.id);
+    const next = exists ? state.cards.map((c) => (c.id === state.draft.id ? state.draft : c)) : [...state.cards, state.draft];
+    await persist(next);
+    state.activeId = state.draft.id;
+    state.view = "detail";
+    render();
+  }
+  async function deleteCard(id) {
+    await persist(state.cards.filter((c) => c.id !== id));
+    state.view = "list";
+    state.activeId = null;
+    render();
+  }
+
+  function renderList() {
+    const cards = sortedCards();
+    let body;
+    if (!state.loaded) {
+      body = '<div style="color:#8A93A6;font-size:14px;padding:40px 0;text-align:center;">Opening the catalog…</div>';
+    } else if (cards.length === 0) {
+      body = '<div class="empty"><p style="font-size:14px;margin-bottom:16px;">No cards filed yet.</p><button class="primaryBtn" style="width:auto;padding:10px 18px;font-size:13px;" onclick="App.startNew()">Add your first card</button></div>';
+    } else {
+      body = cards.map((c) => {
+        const meta = [c.issuer, c.last4 ? "••" + c.last4 : ""].filter(Boolean).join(" · ") || "No details yet";
+        const perks = c.perks && c.perks.length ? '<div class="listPerks">' + c.perks.length + " perk" + (c.perks.length > 1 ? "s" : "") + "</div>" : "";
+        return '<button class="listItem" onclick="App.openDetail(\'' + c.id + '\')"><div class="listTop"><div><div class="listName">' + esc(c.nickname) + '</div><div class="listMeta">' + esc(meta) + '</div></div><div class="listRight"><div class="listAge">' + ageLabel(c.opened) + "</div>" + perks + "</div></div></button>";
+      }).join("");
+    }
+    const addMore = cards.length > 0 ? '<button class="ghostBtn" style="margin-top:18px;" onclick="App.startNew()">' + ICONS.plus.replace("currentColor", "#A8823C") + ' File a new card</button>' : "";
+    return '<header style="margin-bottom:22px;"><div class="headerRow"><h1>The Catalog</h1><span class="count">' + state.cards.length + (state.cards.length === 1 ? " card" : " cards") + '</span></div><p class="sub">Opening dates, perks, and the details worth remembering.</p></header>' + body + addMore;
+  }
+
+  function renderDetail() {
+    const c = getActive();
+    if (!c) { state.view = "list"; return renderList(); }
+    const meta = [c.issuer, c.network, c.last4 ? "••" + c.last4 : ""].filter(Boolean).join(" · ");
+    let extra3 = c.creditLimit ? '<div><div class="fieldLabel">CREDIT LIMIT</div><div class="fieldVal">$' + esc(c.creditLimit) + "</div></div>" : "";
+    let perksHtml = "";
+    if (c.perks && c.perks.length) {
+      perksHtml = '<div style="margin-top:20px;"><div class="fieldLabel" style="margin-bottom:6px;">PERKS</div><ul class="perksList">' + c.perks.map((p) => '<li><span style="color:#5F7A61;">•</span> ' + esc(p) + "</li>").join("") + "</ul></div>";
+    }
+    let notesHtml = c.notes ? '<div style="margin-top:18px;"><div class="fieldLabel" style="margin-bottom:4px;">NOTES</div><div class="notesTxt">' + esc(c.notes) + "</div></div>" : "";
+
+    return '<button class="backBtn" onclick="App.goList()">' + ICONS.chevronLeft + ' Catalog</button>' +
+      '<div class="card"><div class="cardTop"><div><div class="cardName">' + esc(c.nickname) + '</div><div class="cardMeta">' + esc(meta) + '</div></div><div style="display:flex;gap:8px;"><button class="iconBtn" onclick="App.startEdit(\'' + c.id + '\')">' + ICONS.pencil + '</button><button class="iconBtn" onclick="App.deleteCard(\'' + c.id + '\')">' + ICONS.trash + '</button></div></div>' +
+      '<div class="grid2"><div><div class="fieldLabel">OPENED</div><div class="fieldVal">' + formatDate(c.opened) + '</div><div class="fieldSub">' + ageLabel(c.opened) + '</div></div><div><div class="fieldLabel">ANNUAL FEE</div><div class="fieldVal">' + (c.annualFee ? "$" + esc(c.annualFee) : "None") + (c.feeMonth ? " · " + esc(c.feeMonth) : "") + '</div></div>' + extra3 + '</div>' +
+      perksHtml + notesHtml + '</div>';
+  }
+
+  function renderForm() {
+    const d = state.draft;
+    const isEdit = state.cards.some((c) => c.id === d.id);
+    const errorHtml = state.error ? '<div class="errorTxt">' + esc(state.error) + "</div>" : "";
+    const chips = d.perks.map((p, i) => '<span class="chip">' + esc(p) + '<span onclick="App.removePerk(' + i + ')">' + ICONS.x + "</span></span>").join("");
+
+    return '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;"><button class="backBtn" style="margin-bottom:0;" onclick="App.cancelForm()">' + ICONS.chevronLeft + ' Cancel</button><span style="font-size:12px;color:#8A93A6;">' + (isEdit ? "Editing" : "New card") + '</span></div>' +
+      errorHtml +
+      '<div class="formGroup">' +
+      '<div><label class="field">NICKNAME</label><input id="f-nickname" value="' + esc(d.nickname) + '" placeholder="e.g. Sapphire Reserve"></div>' +
+      '<div class="grid2"><div><label class="field">ISSUER</label><input id="f-issuer" value="' + esc(d.issuer) + '" placeholder="Chase"></div><div><label class="field">NETWORK</label><input id="f-network" value="' + esc(d.network) + '" placeholder="Visa"></div></div>' +
+      '<div class="grid2"><div><label class="field">LAST 4 DIGITS</label><input id="f-last4" maxlength="4" value="' + esc(d.last4) + '" placeholder="1234"></div><div><label class="field">OPENED</label><input id="f-opened" type="date" value="' + esc(d.opened) + '"></div></div>' +
+      '<div class="grid3"><div><label class="field">ANNUAL FEE ($)</label><input id="f-fee" value="' + esc(d.annualFee) + '" placeholder="0"></div><div><label class="field">FEE MONTH</label><input id="f-feeMonth" value="' + esc(d.feeMonth) + '" placeholder="January"></div><div><label class="field">CREDIT LIMIT</label><input id="f-limit" value="' + esc(d.creditLimit) + '" placeholder="10000"></div></div>' +
+      '<div><label class="field">PERKS</label><div class="addRow"><input id="f-perkInput" value="' + esc(state.perkInput) + '" placeholder="e.g. Priority Pass, add and press enter"><button class="smallAddBtn" onclick="App.addPerk()">' + ICONS.plus + '</button></div><div>' + chips + '</div></div>' +
+      '<div><label class="field">NOTES</label><textarea id="f-notes" style="min-height:70px;resize:vertical;" placeholder="Anything else worth remembering — retention offers, PIN hints, who referred you, etc.">' + esc(d.notes) + '</textarea></div>' +
+      '<button class="primaryBtn" style="margin-top:6px;" onclick="App.saveDraft()">Save card</button>' +
+      '</div>';
+  }
+
+  function wireFormInputs() {
+    const map = {
+      "f-nickname": "nickname", "f-issuer": "issuer", "f-network": "network", "f-last4": "last4",
+      "f-opened": "opened", "f-fee": "annualFee", "f-feeMonth": "feeMonth", "f-limit": "creditLimit", "f-notes": "notes"
+    };
+    Object.keys(map).forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener("input", (e) => { state.draft[map[id]] = e.target.value; });
+    });
+    const perkEl = document.getElementById("f-perkInput");
+    if (perkEl) {
+      perkEl.addEventListener("input", (e) => { state.perkInput = e.target.value; });
+      perkEl.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); App.addPerk(); } });
+    }
+  }
+
+  function render() {
+    const app = document.getElementById("app");
+    let inner;
+    if (state.view === "list") inner = renderList();
+    else if (state.view === "detail") inner = renderDetail();
+    else inner = renderForm();
+    app.innerHTML = '<div class="wrap">' + inner + '</div>';
+    if (state.view === "form") wireFormInputs();
+  }
+
+  window.App = { startNew, startEdit, openDetail, goList, cancelForm, addPerk, removePerk, saveDraft, deleteCard };
+  loadCards();
+})();
+</script>
